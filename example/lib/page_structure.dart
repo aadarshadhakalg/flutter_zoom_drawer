@@ -10,6 +10,8 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:provider/provider.dart';
 
+
+
 class PageStructure extends StatelessWidget {
   final String title;
   final Widget child;
@@ -28,7 +30,7 @@ class PageStructure extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final angle = ZoomDrawer.isRTL() ? 180 * pi / 180 : 0.0;
+    final angle = true ? 180 * pi / 180 : 0.0;
     final _currentPage =
         context.select<MenuProvider, int>((provider) => provider.currentPage);
     final container = Container(
@@ -58,7 +60,10 @@ class PageStructure extends StatelessWidget {
               Icons.menu,
             ),
             onPressed: () {
-              ZoomDrawer.of(context).toggle();
+              // ZoomDrawer.of(context).toggle();
+              AnimatedDrawerWidget.of(context).toggle();
+              // RenderDefault.of(context).toggle();
+
             },
           ),
         ),

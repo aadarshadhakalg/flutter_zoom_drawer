@@ -39,14 +39,15 @@ class _MenuScreenState extends State<MenuScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).primaryColor,
-              Colors.indigo,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          // gradient: LinearGradient(
+          //   colors: [
+          //     Theme.of(context).primaryColor,
+          //     Colors.indigo,
+          //   ],
+          //   begin: Alignment.topLeft,
+          //   end: Alignment.bottomRight,
+          // ),
+          color: Colors.blue
         ),
         child: SafeArea(
           child: Column(
