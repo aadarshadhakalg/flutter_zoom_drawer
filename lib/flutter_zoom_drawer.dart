@@ -1,10 +1,17 @@
 library flutter_zoom_drawer;
-
-import 'dart:math' show pi;
 import 'dart:ui' as ui show window;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'render_default.dart';
+import 'render_style1.dart';
+import 'render_style2.dart';
+import 'render_style3.dart';
+import 'render_style4.dart';
+import 'render_style5.dart';
+import 'render_style6.dart';
+import 'enum_state.dart';
+export 'enum_state.dart';
 
 class ZoomDrawerController {
   /// callback function to open the drawer
@@ -24,8 +31,9 @@ class ZoomDrawerController {
   ValueNotifier<DrawerState> stateNotifier;
 }
 
-class ZoomDrawer extends StatefulWidget {
+class ZoomDrawer extends StatelessWidget {
   ZoomDrawer({
+    Key key,
     this.type = StyleState.styleDefault,
     this.controller,
     @required this.menuScreen,
@@ -41,7 +49,6 @@ class ZoomDrawer extends StatefulWidget {
     this.duration,
   }) : assert(angle <= 0.0 && angle >= -30.0);
 
-  // Layout style
   final StyleState type;
 
   /// controller to have access to the open/close/toggle function of the drawer
@@ -78,39 +85,248 @@ class ZoomDrawer extends StatefulWidget {
   /// Drawer Duration
   final Duration duration;
 
-  @override
-  _ZoomDrawerState createState() => new _ZoomDrawerState();
-
-  /// static function to provide the drawer state
-  static _ZoomDrawerState of(BuildContext context) {
-    return context.findAncestorStateOfType<State<ZoomDrawer>>();
-  }
-
   /// Static function to determine the device text direction RTL/LTR
   static bool isRTL() {
     return ui.window.locale.languageCode.toLowerCase() == "ar";
   }
+
+  factory ZoomDrawer.style({
+    Key key,
+    StyleState type,
+    Widget menuScreen,
+    Widget mainScreen,
+    double slideWidth,
+    double slideHeight,
+    double angle,
+    bool showShadow,
+    double borderRadius,
+    Color backgroundColor,
+  }) = _ZoomDrawerStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    print(slideWidth);
+    return AnimatedDrawerWidget(
+      controller: controller,
+      duration: duration,
+      slideWidth: slideWidth,
+      angle: angle,
+      builderAnimated:
+          (AnimationController _animationController, DrawerState state, Function toggle) {
+        return RenderDefault(
+          builderMain: mainScreen,
+          builderMenu: menuScreen,
+          controller: _animationController,
+          drawerState: state,
+          toggle: toggle,
+        );
+      },
+    );
+  }
 }
 
-class _ZoomDrawerState extends State<ZoomDrawer> with SingleTickerProviderStateMixin {
-  final Curve _scaleDownCurve = Interval(0.0, 0.3, curve: Curves.easeOut);
-  final Curve _scaleUpCurve = Interval(0.0, 1.0, curve: Curves.easeOut);
-  final Curve _slideOutCurve = Interval(0.0, 1.0, curve: Curves.easeOut);
-  final Curve _slideInCurve = Interval(0.0, 1.0, curve: Curves.easeOut);// Curves.bounceOut
-  static const Cubic slowMiddle = Cubic(0.19, 1, 0.22, 1);
 
-  /// check the slide direction
-  final int _rtlSlide = ZoomDrawer.isRTL() ? -1 : 1;
 
-  final bool _rtl = ZoomDrawer.isRTL();
+class _ZoomDrawerStyle extends ZoomDrawer {
+  final StyleState type;
+  _ZoomDrawerStyle({
+    Color backgroundColor,
+    double borderRadius = 16.0,
+    Key key,
+    Widget menuScreen,
+    Widget mainScreen,
+    double slideWidth,
+    double slideHeight = 0.0,
+    double angle = -12,
+    bool showShadow,
+    this.type = StyleState.style1,
+  }) : super(
+          key: key,
+          menuScreen: menuScreen,
+          mainScreen: mainScreen,
+          slideWidth: slideWidth,
+          slideHeight: slideHeight,
+          showShadow: showShadow,
+          angle: angle,
+          backgroundColor: backgroundColor,
+          borderRadius: borderRadius,
+        );
+  Widget renderLayout() {
+    switch (type) {
+      case StyleState.style1:
+        return AnimatedDrawerWidget(
+          controller: controller,
+          duration: duration,
+          builderAnimated: (AnimationController controller, DrawerState state,
+              Function toggle) {
+            return RenderStyle1(
+              backgroundColor: backgroundColor,
+              builderMain: mainScreen,
+              builderMenu: menuScreen,
+              controller: controller,
+              drawerState: state,
+              toggle: toggle,
+            );
+          },
+        );
+        break;
+      case StyleState.style2:
+        return AnimatedDrawerWidget(
+          controller: controller,
+          duration: duration,
+          builderAnimated: (AnimationController controller, DrawerState state,
+              Function toggle) {
+            return RenderStyle2(
+              builderMain: mainScreen,
+              builderMenu: menuScreen,
+              controller: controller,
+              drawerState: state,
+              toggle: toggle,
+            );
+          },
+        );
+        break;
+      case StyleState.style3:
+        return AnimatedDrawerWidget(
+          controller: controller,
+          duration: duration,
+          builderAnimated: (AnimationController controller, DrawerState state,
+              Function toggle) {
+            return RenderStyle3(
+              builderMain: mainScreen,
+              builderMenu: menuScreen,
+              controller: controller,
+              drawerState: state,
+              toggle: toggle,
+              angle: angle,
+              slideWidth: slideWidth,
+              slideHeight: slideHeight,
+              showShadow: showShadow,
+              backgroundColor: backgroundColor,
+              borderRadius: borderRadius,
+            );
+          },
+        );
+        break;
+      case StyleState.style4:
+        return AnimatedDrawerWidget(
+          controller: controller,
+          duration: duration,
+          builderAnimated: (AnimationController controller, DrawerState state,
+              Function toggle) {
+            return RenderStyle4(
+              builderMain: mainScreen,
+              builderMenu: menuScreen,
+              controller: controller,
+              drawerState: state,
+              toggle: toggle,
+            );
+          },
+        );
+        break;
+      case StyleState.style5:
+        return AnimatedDrawerWidget(
+          controller: controller,
+          duration: duration,
+          builderAnimated: (AnimationController controller, DrawerState state,
+              Function toggle) {
+            return RenderStyle5(
+              builderMain: mainScreen,
+              builderMenu: menuScreen,
+              controller: controller,
+              drawerState: state,
+              toggle: toggle,
+            );
+          },
+        );
+        break;
+      case StyleState.style6:
+        return AnimatedDrawerWidget(
+          controller: controller,
+          duration: duration,
+          builderAnimated: (AnimationController controller, DrawerState state,
+              Function toggle) {
+            return RenderStyle6(
+              builderMain: mainScreen,
+              builderMenu: menuScreen,
+              controller: controller,
+              drawerState: state,
+              toggle: toggle,
+            );
+          },
+        );
+        break;
+      default:
+        return AnimatedDrawerWidget(
+          controller: controller,
+          duration: duration,
+          builderAnimated: (AnimationController controller, DrawerState state,
+              Function toggle) {
+            return RenderDefault(
+              builderMain: mainScreen,
+              builderMenu: menuScreen,
+              controller: controller,
+              drawerState: state,
+              toggle: toggle,
+            );
+          },
+        );
+        break;
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return renderLayout();
+  }
+}
 
+class AnimatedDrawerWidget extends StatefulWidget {
+  final Color backgroundColor;
+  final bool showShadow;
+  final Curve openCurve;
+  final Curve closeCurve;
+  final double angle;
+  final double slideWidth;
+  final double slideHeight;
+  final double borderRadius;
+  AnimatedDrawerWidget({
+    Key key,
+    this.controller,
+    this.duration,
+    this.angle = -12.0,
+    this.slideWidth = 275.0,
+    this.slideHeight = 0.0,
+    this.borderRadius = 16.0,
+    this.backgroundColor = Colors.white,
+    this.showShadow = false,
+    this.openCurve,
+    this.closeCurve,
+    @required this.builderAnimated,
+  }) : assert(angle <= 0.0 && angle >= -30.0);
+
+  final ZoomDrawerController controller;
+  final Duration duration;
+  // final Widget Function()
+
+  final Widget Function(
+          AnimationController controller, DrawerState state, Function toggle)
+      builderAnimated;
+
+  @override
+  _AnimatedWidgetState createState() => _AnimatedWidgetState();
+
+  static _AnimatedWidgetState of(BuildContext context) {
+    return context.findAncestorStateOfType<State<AnimatedDrawerWidget>>();
+  }
+
+}
+
+class _AnimatedWidgetState extends State<AnimatedDrawerWidget>
+    with SingleTickerProviderStateMixin {
+  // static const Cubic slowMiddle = Cubic(0.19, 1, 0.22, 1);
   AnimationController _animationController;
-  Animation<double> scaleAnimation;
 
   DrawerState _state = DrawerState.closed;
-
-  double get _percentOpen => _animationController.value;
-
   /// Open drawer
   open() {
     _animationController.forward();
@@ -123,7 +339,6 @@ class _ZoomDrawerState extends State<ZoomDrawer> with SingleTickerProviderStateM
 
   AnimationController get animationController => _animationController;
 
-  /// Toggle drawer
   toggle() {
     if (_state == DrawerState.open) {
       close();
@@ -132,10 +347,9 @@ class _ZoomDrawerState extends State<ZoomDrawer> with SingleTickerProviderStateM
     }
   }
 
-  /// check whether drawer is open
-  bool isOpen() => _state == DrawerState.open /* || _state == DrawerState.opening*/;
+  bool isOpen() =>
+      _state == DrawerState.open /* || state == DrawerState.opening*/;
 
-  /// Drawer state
   ValueNotifier<DrawerState> stateNotifier;
 
   @override
@@ -147,7 +361,10 @@ class _ZoomDrawerState extends State<ZoomDrawer> with SingleTickerProviderStateM
     /// Initialize the animation controller
     /// add status listener to update the menuStatus
     _animationController = AnimationController(
-        vsync: this, duration: widget.duration is Duration ? widget.duration : Duration(milliseconds: 250))
+        vsync: this,
+        duration: widget.duration is Duration
+            ? widget.duration
+            : Duration(milliseconds: 250))
       ..addStatusListener((AnimationStatus status) {
         switch (status) {
           case AnimationStatus.forward:
@@ -168,15 +385,6 @@ class _ZoomDrawerState extends State<ZoomDrawer> with SingleTickerProviderStateM
             break;
         }
       });
-    scaleAnimation =
-        new Tween(
-      begin: 0.9,
-      end: 1.0,
-        ).animate(new CurvedAnimation(
-          parent: _animationController,
-          curve: Curves.slowMiddle,
-        ));
-        // CurvedAnimation(parent: _animationController, curve: Curves.easeIn); //Curves.easeIn Curves.linear
     /// assign controller function to the widget methods
     if (widget.controller != null) {
       widget.controller.open = open;
@@ -197,470 +405,21 @@ class _ZoomDrawerState extends State<ZoomDrawer> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  /// Build the widget based on the animation value
-  ///
-  /// * [container] is the widget to be displayed
-  ///
-  /// * [angle] is the the Z rotation angle
-  ///
-  /// * [scale] is a string to help identify this animation during
-  ///   debugging (used by [toString]).
-  ///
-  /// * [slide] is the sliding amount of the drawer
-  ///
-  Widget _zoomAndSlideContent(Widget container, {double angle, double scale, double slideW = 0, double slideH = 0}) {
-    var slidePercent, scalePercent;
-
-    /// determine current slide percent based on the MenuStatus
-    switch (_state) {
-      case DrawerState.closed:
-        slidePercent = 0.0;
-        scalePercent = 0.0;
-        break;
-      case DrawerState.open:
-        slidePercent = 1.0;
-        scalePercent = 1.0;
-        break;
-      case DrawerState.opening:
-        slidePercent = (widget.openCurve ?? _slideOutCurve).transform(_percentOpen);
-        scalePercent = _scaleDownCurve.transform(_percentOpen);
-        break;
-      case DrawerState.closing:
-        slidePercent = (widget.closeCurve ?? _slideInCurve).transform(_percentOpen);
-        scalePercent = _scaleUpCurve.transform(_percentOpen);
-        break;
-    }
-
-    /// calculated sliding amount based on the RTL and animation value
-    final slideAmountWidth = (widget.slideWidth - slideW) * slidePercent * _rtlSlide;
-    final slideAmountHeight = (widget.slideHeight - slideH) * slidePercent * _rtlSlide;
-
-    /// calculated scale amount based on the provided scale and animation value
-    final contentScale = (scale ?? 1.0) - (0.2 * scalePercent);
-
-    /// calculated radius based on the provided radius and animation value
-    final cornerRadius = widget.borderRadius * _percentOpen;
-
-    /// calculated rotation amount based on the provided angle and animation value
-    final rotationAngle = (((angle ?? widget.angle) * pi * _rtlSlide) / 180) * _percentOpen;
-
-    return Transform(
-      transform: Matrix4.translationValues(slideAmountWidth, slideAmountHeight, 0.0)
-        ..rotateZ(rotationAngle)
-        ..scale(contentScale, contentScale),
-      alignment: Alignment.centerLeft,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(cornerRadius),
-        child: container,
-      ),
-    );
-  }
-
-  /*
-    Container(
-        decoration: BoxDecoration(
-          boxShadow: Platform.isAndroid
-              ? [
-                  BoxShadow(
-                    color: Colors.black12,
-                    offset: const Offset(0.0, 5.0),
-                    blurRadius: 15.0,
-                    spreadRadius: 10.0,
-                  ),
-                ]
-              : kElevationToShadow[5],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(cornerRadius),
-          child: container,
-        ),
-      )
-  * */
-
-  Widget renderDefault() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        double left = (1 - _animationController.value) * rightSlide;
-        return Stack(
-          children: [
-            GestureDetector(
-              child: Stack(
-                children: [
-                  widget.mainScreen,
-                  if (_animationController.value > 0) ...[
-                    Opacity(
-                      opacity: _animationController.value * 0.5,
-                      child: Container(
-                        color: Colors.black,
-                      ),
-                    )
-                  ],
-                ],
-              ),
-              onTap: () {
-                if (_state == DrawerState.open) {
-                  toggle();
-                }
-              },
-            ),
-            Transform.translate(
-              offset: Offset(-left, 0),
-              child: Container(
-                width: rightSlide,
-                child: widget.menuScreen,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget renderStyle1() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        double slide = rightSlide * _animationController.value;
-        return Stack(
-          children: [
-            Scaffold(
-              backgroundColor: widget.backgroundColor,
-              body: Transform.translate(
-                offset: Offset(0, 0),
-                child: widget.menuScreen,
-              ),
-            ),
-            Transform(
-              transform: Matrix4.identity()..translate(slide),
-              alignment: Alignment.center,
-              child: Container(
-                child: GestureDetector(
-                  child: Stack(
-                    children: [
-                      widget.mainScreen,
-                      if (_animationController.value > 0) ...[
-                        Opacity(
-                          opacity: _animationController.value * 0.5,
-                          child: Container(
-                            color: Colors.black,
-                          ),
-                        )
-                      ],
-                    ],
-                  ),
-                  onTap: () {
-                    if (_state == DrawerState.open) {
-                      toggle();
-                    }
-                  },
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget renderStyle2() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        double slide = rightSlide * _animationController.value;
-        double left = (1 - _animationController.value) * rightSlide;
-        return Stack(
-          children: [
-            Transform(
-              transform: Matrix4.identity()..translate(slide),
-              alignment: Alignment.center,
-              child: GestureDetector(
-                child: Stack(
-                  children: [
-                    widget.mainScreen,
-                    if (_animationController.value > 0) ...[
-                      Opacity(
-                        opacity: _animationController.value * 0.5,
-                        child: Container(
-                          color: Colors.black,
-                        ),
-                      )
-                    ],
-                  ],
-                ),
-                onTap: () {
-                  if (_state == DrawerState.open) {
-                    toggle();
-                  }
-                },
-              ),
-            ),
-            Transform.translate(
-              offset: Offset(-left, 0),
-              child: Container(color: Colors.blueAccent, width: rightSlide, child: widget.menuScreen),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget renderStyle3() {
-    final slidePercent = ZoomDrawer.isRTL() ? MediaQuery.of(context).size.width * .1 : 15.0;
-
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        return Stack(
-          children: [
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              body: Transform.translate(
-                offset: Offset(0, 0),
-                child: widget.menuScreen,
-              ),
-            ),
-            if (widget.showShadow) ...[
-              /// Displaying the first shadow
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (_, w) => _zoomAndSlideContent(w,
-                    angle: (widget.angle == 0.0) ? 0.0 : widget.angle - 8, scale: .9, slideW: slidePercent * 2),
-                child: Container(
-                  color: widget.backgroundColor.withAlpha(31),
-                ),
-              ),
-              /// Displaying the second shadow
-              AnimatedBuilder(
-                animation: _animationController,
-                builder: (_, w) => _zoomAndSlideContent(w,
-                    angle: (widget.angle == 0.0) ? 0.0 : widget.angle - 4.0, scale: .95, slideW: slidePercent),
-                child: Container(
-                  color: widget.backgroundColor,
-                ),
-              )
-            ],
-            AnimatedBuilder(
-              animation: _animationController,
-              builder: (_, w) => _zoomAndSlideContent(w),
-              child: GestureDetector(
-                child: Stack(
-                  children: [
-                    widget.mainScreen,
-                    if (_animationController.value > 0) ...[
-                      Opacity(
-                        opacity: 0,
-                        child: Container(
-                          color: Colors.black,
-                        ),
-                      )
-                    ]
-                  ],
-                ),
-                onTap: () {
-                  if (_state == DrawerState.open) {
-                    toggle();
-                  }
-                },
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  Widget renderStyle4() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        double x = _animationController.value * (rightSlide / 1.89);
-        double rotate = _animationController.value * (pi / 4);
-        return Stack(
-          children: [
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              body: Transform.translate(
-                offset: Offset(0, 0),
-                child: widget.menuScreen,
-              ),
-            ),
-            Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.0009)
-                ..translate(x)
-                ..rotateY(rotate),
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  if (_state == DrawerState.open) {
-                    toggle();
-                  }
-                },
-                child: Stack(
-                  children: [
-                    widget.mainScreen,
-                    if (_animationController.value > 0) ...[
-                      Opacity(
-                        opacity: 0,
-                        child: Container(
-                          color: Colors.black,
-                        ),
-                      )
-                    ]
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget renderStyle5() {
-    final rightSlide = MediaQuery.of(context).size.width * 0.75;
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        double x = _animationController.value * (rightSlide / 2.52);
-        double scale = 1 - (_animationController.value * 0.3);
-        double rotate = _animationController.value * (pi / 4);
-        return Stack(
-          children: [
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              body: Transform.translate(
-                offset: Offset(0, 0),
-                child: widget.menuScreen,
-              ),
-            ),
-            Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.0009)
-                ..translate(x)
-                ..scale(scale)
-                ..rotateY(-rotate),
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {
-                  if (_state == DrawerState.open) {
-                    toggle();
-                  }
-                },
-                child: Stack(
-                  children: [
-                    widget.mainScreen,
-                    if (_animationController.value > 0) ...[
-                      Opacity(
-                        opacity: 0,
-                        child: Container(
-                          color: Colors.black,
-                        ),
-                      )
-                    ]
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget renderStyle6() {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
-        double scale = _animationController.value > 0.8 ? _animationController.value  : 0.8;
-        return Stack(
-          children: [
-            widget.mainScreen,
-            if (_animationController.value > 0) ...[
-              Opacity(
-                // opacity: _animationController.value,
-                opacity: _animationController.drive(CurveTween(curve: Curves.easeIn)).value, //Curves.easeOut
-                child: ScaleTransition(
-                  scale: scaleAnimation,
-                  child: GestureDetector(
-                    child: Stack(
-                      children: <Widget>[
-                        widget.menuScreen,
-                          Padding(
-                          padding: EdgeInsets.only(right: 24, top: 24),
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              child: FloatingActionButton(
-                                onPressed: () {
-                                  if (_state == DrawerState.open) {
-                                    toggle();
-                                  }
-                                },
-                                backgroundColor: Colors.transparent,
-                                elevation: 0.0,
-                                child: Icon(Icons.close, size: 20),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ],
-        );
-      },
-    );
-  }
-
-  Widget renderLayout() {
-    switch (widget.type) {
-      case StyleState.style1:
-        return renderStyle1();
-        break;
-      case StyleState.style2:
-        return renderStyle2();
-        break;
-      case StyleState.style3:
-        return renderStyle3();
-        break;
-      case StyleState.style4:
-        return renderStyle4();
-        break;
-      case StyleState.style5:
-        return renderStyle5();
-        break;
-      case StyleState.style6:
-        return renderStyle6();
-        break;
-      default:
-        return renderDefault();
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       /// Detecting the slide amount to close the drawer in RTL & LTR
       onPanUpdate: (details) {
-        if (_state == DrawerState.open && details.delta.dx < -6 && !_rtl || details.delta.dx < 6 && _rtl) {
+        if (_state == DrawerState.open && details.delta.dx < -6 ||
+            details.delta.dx < 6) {
           toggle();
         }
       },
-      child: renderLayout(),
+      child: widget.builderAnimated(
+        _animationController,
+        _state,
+        toggle,
+      ),
     );
   }
 }
-
-/// Drawer State enum
-enum DrawerState { opening, closing, open, closed }
-
-// Style State
-enum StyleState { styleDefault, style1, style2, style3, style4, style5, style6 }

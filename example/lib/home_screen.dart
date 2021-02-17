@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:example/menu_page.dart';
 import 'package:example/page_structure.dart';
-import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:provider/provider.dart';
+// import 'package:flutter_zoom_drawer/enum_state.dart';
+
+
 
 class HomeScreen extends StatefulWidget {
   static List<MenuItem> mainMenu = [
@@ -21,34 +22,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _drawerController = ZoomDrawerController();
-
-  int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
-    return ZoomDrawer(
-      controller: _drawerController,
-      type: 'default',  // default,style1,style2,style3,style4,style5
+    return ZoomDrawer.style(
+      type: StyleState.style3,
+      backgroundColor: Colors.grey[300],
+      borderRadius: 40,
+      angle: 0.0,
+      slideWidth: MediaQuery.of(context).size.width * (ZoomDrawer.isRTL() ? .45 : 0.829),
+      slideHeight: -MediaQuery.of(context).size.height * 0.19,
+      showShadow: true,
       menuScreen: MenuScreen(
         HomeScreen.mainMenu,
-        callback: _updatePage,
-        current: _currentPage,
       ),
       mainScreen: MainScreen(),
-      borderRadius: 24.0,
-      showShadow: true, //default,style1,style3
-      angle: 0.0, //default
-      slideWidth: MediaQuery.of(context).size.width * (ZoomDrawer.isRTL() ? .45 : 0.65), // default
-      // slideHeight: MediaQuery.of(context).size.height * (ZoomDrawer.isRTL() ? .45 : -0.17), //default
-      // openCurve: Curves.fastOutSlowIn,
-      // closeCurve: Curves.bounceIn,
     );
-  }
-
-  void _updatePage(index) {
-    Provider.of<MenuProvider>(context, listen: false).updateCurrentPage(index);
-    _drawerController.toggle();
   }
 }
 
@@ -60,24 +49,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
-    final rtl = ZoomDrawer.isRTL();
-    return ValueListenableBuilder<DrawerState>(
-      valueListenable: ZoomDrawer.of(context).stateNotifier,
-      builder: (context, state, child) {
-        return AbsorbPointer(
-          absorbing: state != DrawerState.closed,
-          child: child,
-        );
-      },
-      child: GestureDetector(
-        child: PageStructure(),
-        onPanUpdate: (details) {
-          if (details.delta.dx < 6 && !rtl || details.delta.dx < -6 && rtl) {
-            ZoomDrawer.of(context).toggle();
-          }
-        },
-      ),
-    );
+    return PageStructure();
   }
 }
 
