@@ -4,9 +4,7 @@ import 'package:example/page_structure.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-// import 'package:flutter_zoom_drawer/enum_state.dart';
-
-
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static List<MenuItem> mainMenu = [
@@ -22,22 +20,34 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _drawerController = ZoomDrawerController();
+
+  int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
-    return ZoomDrawer.style(
-      type: StyleState.style3,
-      backgroundColor: Colors.grey[300],
-      borderRadius: 40,
-      angle: 0.0,
-      slideWidth: MediaQuery.of(context).size.width * (ZoomDrawer.isRTL() ? .45 : 0.829),
-      slideHeight: -MediaQuery.of(context).size.height * 0.19,
-      showShadow: true,
+    return ZoomDrawer(
+      controller: _drawerController,
+      style: DrawerStyle.Style7,
       menuScreen: MenuScreen(
         HomeScreen.mainMenu,
+        callback: _updatePage,
+        current: _currentPage,
       ),
       mainScreen: MainScreen(),
+      borderRadius: 24.0,
+//      showShadow: true,
+      angle: 0.0,
+      slideWidth:
+          MediaQuery.of(context).size.width * (ZoomDrawer.isRTL() ? .45 : 0.65),
+      // openCurve: Curves.fastOutSlowIn,
+      // closeCurve: Curves.bounceIn,
     );
+  }
+
+  void _updatePage(index) {
+    Provider.of<MenuProvider>(context, listen: false).updateCurrentPage(index);
+    _drawerController.toggle!();
   }
 }
 
@@ -49,7 +59,24 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
-    return PageStructure();
+    final rtl = ZoomDrawer.isRTL();
+    return ValueListenableBuilder<DrawerState>(
+      valueListenable: ZoomDrawer.of(context)!.stateNotifier!,
+      builder: (context, state, child) {
+        return AbsorbPointer(
+          absorbing: state != DrawerState.closed,
+          child: child,
+        );
+      },
+      child: GestureDetector(
+        child: PageStructure(),
+        onPanUpdate: (details) {
+          if (details.delta.dx < 6 && !rtl || details.delta.dx < -6 && rtl) {
+            ZoomDrawer.of(context)!.toggle();
+          }
+        },
+      ),
+    );
   }
 }
 
